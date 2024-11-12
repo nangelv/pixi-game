@@ -1,4 +1,5 @@
 import { Application } from "pixi.js";
+import { sound } from '@pixi/sound';
 import { createBackground } from "./background.js";
 import { createGround } from "./ground.js";
 import { createSprites } from "./sprites.js";
@@ -14,6 +15,18 @@ import { updateProjectiles, generateRandomProjectile, checkCollision } from "./p
   });
   app.canvas.style.position = "absolute";
   document.body.appendChild(app.canvas);
+
+  // Load sound assets
+  sound.add('hurt', 'sounds/hurt.wav');
+  sound.add('attack', 'sounds/attack.wav');
+  sound.add('jump', 'sounds/jump.wav');
+  sound.add('battle', {
+    url: 'sounds/battle.wav',
+    loop: true,
+    volume: 0.5
+  });
+  // Play the background music
+  sound.play('battle');
 
   await createBackground(app);
   await createGround(app);
@@ -57,6 +70,7 @@ import { updateProjectiles, generateRandomProjectile, checkCollision } from "./p
       moveRight = true;
     } else if (event.key === "w" || event.key === "W" || event.key === " ") {
       jump(animatedSprite, jumpTextures, groundY, app);
+      sound.play('jump');
     } 
     else if (event.key === "t" || event.key === "T") {
       isAttacking = true;
@@ -68,6 +82,7 @@ import { updateProjectiles, generateRandomProjectile, checkCollision } from "./p
         animatedSprite.textures = idleTextures.textures; 
         animatedSprite.play();
       };
+      sound.play('attack');
     }
   });
 
@@ -120,7 +135,9 @@ import { updateProjectiles, generateRandomProjectile, checkCollision } from "./p
           console.log("Projectile destroyed by attack!");
           projectile.parent.removeChild(projectile);
           projectiles.splice(index, 1);
+          sound.play('hit');
         } else {
+          sound.play('hurt');
           console.log("Character hit by projectile!");
           animatedSprite.textures = deathTextures.textures;
           animatedSprite.loop = false; // Play the animation only once
@@ -135,6 +152,7 @@ import { updateProjectiles, generateRandomProjectile, checkCollision } from "./p
 
           // Stop the game loop
           app.ticker.stop();
+          sound.stop('battle');
         }
       }
     });
