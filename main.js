@@ -18,6 +18,7 @@ import { updateProjectiles, generateRandomProjectile, checkCollision } from "./p
 
   // Load sound assets
   sound.add('hurt', 'sounds/hurt.wav');
+  sound.add('hit', 'sounds/hit.wav');
   sound.add('attack', 'sounds/attack.wav');
   sound.add('jump', 'sounds/jump.wav');
   sound.add('battle', {
